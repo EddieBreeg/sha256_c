@@ -1,6 +1,14 @@
 #include "sha256.h"
 #include <stdio.h>
 
+#define Ch(x, y, z) ((x & y) ^ (~x & z))
+#define Maj(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
+
+#define SIGMA_0(x) (ROTR(x,  2) ^ ROTR(x, 13) ^ ROTR(x, 22))
+#define SIGMA_1(x) (ROTR(x,  6) ^ ROTR(x, 11) ^ ROTR(x, 25))
+#define sigma_0(x) (ROTR(x,  7) ^ ROTR(x, 18) ^ (x >> 3))
+#define sigma_1(x) ((ROTR(x, 17) ^ ROTR(x, 19)) ^ (x >> 10))
+
 uint32 K[] = {
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
     0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
@@ -88,25 +96,20 @@ void _update(sha256_context* ctx)
     ctx->hash[6] += g;
     ctx->hash[7] += h;
 }
-void _hash(sha256_context* ctx, void* data)
+void _hash(sha256_context* ctx, byte* data)
 {
-    size_t i;
     uint32 n = ctx->dataLength & 0x3f;
-    for (i = 0; i < ctx->dataLength - n; i+=64)
+    for(size_t i=0; i< ctx->dataLength - n; i+=64)
     {
-        printf("blabla\n");
-        _parse(ctx, (byte*)(data)+i);
+        _parse(ctx, data + i);
         _update(ctx);
     }
-    if(n)
+    byte buffer[128] = {0};
+    memcpy(buffer, data + ctx->dataLength - n, n);
+    for (int i = 0; i < _pad(buffer, ctx->dataLength); i+=64)
     {
-        byte buffer[128];
-        memcpy(buffer, (byte*)data, n);
-        for(int i=0; i < _pad(buffer, ctx->dataLength); i+=64)
-        {
-            _parse(ctx, buffer+i);
-            _update(ctx);
-        }
+        _parse(ctx, buffer+i);
+        _update(ctx);
     }
 }
 void _finish(sha256_context* ctx, byte output[32])
@@ -124,6 +127,6 @@ void sha256_hash(void* data, size_t len, byte output[32])
 {
     sha256_context ctx;
     _init(&ctx, len);
-    _hash(&ctx, data);
+    _hash(&ctx, (byte*)data);
     _finish(&ctx, output);
 }

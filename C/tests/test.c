@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "../src/sha256.h"
 
-#define MAX_SIZE 128
+#define MAX_SIZE 256
 
 void printTab(byte *buffer, int size)
 {
