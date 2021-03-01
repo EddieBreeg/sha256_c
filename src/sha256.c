@@ -19,7 +19,7 @@ uint32 K[] = {
     0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
-uint32 _pad(byte buffer[128], size_t totalLength)
+uint32 pad(byte buffer[128], size_t totalLength)
 {
     uint32 n = totalLength & 0x3f;
     buffer[n] = 0x80;
@@ -35,12 +35,12 @@ uint32 _pad(byte buffer[128], size_t totalLength)
     }
     return i<64? 64:128; 
 }
-void _parse(sha256_context* ctx, byte buffer[64])
+void parse(sha256_context* ctx, byte buffer[64])
 {
     for(int i=0; i< 16; i++)
         ctx->block[i] = BIG_ENDIAN((buffer+4*i));
 }
-void _init(sha256_context* ctx, size_t length)
+void init(sha256_context* ctx, size_t length)
 {
     // initial internal state
     ctx->hash[0] = 0x6a09e667;
@@ -53,7 +53,7 @@ void _init(sha256_context* ctx, size_t length)
     ctx->hash[7] = 0x5be0cd19;
     ctx->dataLength = length;
 }
-void _update(sha256_context* ctx)
+void update(sha256_context* ctx)
 {
     uint32 W[64];
     for(int i=0; i<16; i++)
@@ -96,23 +96,23 @@ void _update(sha256_context* ctx)
     ctx->hash[6] += g;
     ctx->hash[7] += h;
 }
-void _hash(sha256_context* ctx, byte* data)
+void hash(sha256_context* ctx, byte* data)
 {
     uint32 n = ctx->dataLength & 0x3f;
     for(size_t i=0; i< ctx->dataLength - n; i+=64)
     {
-        _parse(ctx, data + i);
-        _update(ctx);
+        parse(ctx, data + i);
+        update(ctx);
     }
     byte buffer[128] = {0};
     memcpy(buffer, data + ctx->dataLength - n, n);
-    for (int i = 0; i < _pad(buffer, ctx->dataLength); i+=64)
+    for (int i = 0; i < pad(buffer, ctx->dataLength); i+=64)
     {
-        _parse(ctx, buffer+i);
-        _update(ctx);
+        parse(ctx, buffer+i);
+        update(ctx);
     }
 }
-void _finish(sha256_context* ctx, byte output[32])
+void finish(sha256_context* ctx, byte output[32])
 {
     for(int i=0; i<8; i++)
     {
@@ -123,10 +123,10 @@ void _finish(sha256_context* ctx, byte output[32])
         }
     }
 }
-void sha256_hash(void* data, size_t len, byte output[32])
+void sha256_hash(const void* data, size_t len, byte output[32])
 {
     sha256_context ctx;
-    _init(&ctx, len);
-    _hash(&ctx, (byte*)data);
-    _finish(&ctx, output);
+    init(&ctx, len);
+    hash(&ctx, (byte*)data);
+    finish(&ctx, output);
 }

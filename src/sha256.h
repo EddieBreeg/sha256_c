@@ -18,4 +18,4 @@ typedef struct sha256_context
     size_t dataLength;
 } sha256_context;
 
-void sha256_hash(void* data, size_t len, byte output[32]);
+void sha256_hash(const void* data, size_t len, byte output[32]);
