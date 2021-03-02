@@ -21,7 +21,7 @@ Hashes the data buffer and copies the result into the output buffer.
 
 ## Examples and tests
 
-There are a few programs you can use in the [tests](test/) folder in order to ensure the implementation
+There are a few programs you can use in the [tests](tests) folder in order to ensure the implementation
 is working as it should be.
 
 ### test.c & gen.py
