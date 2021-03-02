@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 
+// reads any file and computes the sha256 digest
 int main(int argc, char const *argv[])
 {
     FILE* f = fopen(argv[1], "rb");

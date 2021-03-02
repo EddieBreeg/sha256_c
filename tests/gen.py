@@ -1,3 +1,5 @@
+#!/bin/python3
+
 from hashlib import sha256
 from random import randbytes
 from sys import argv
