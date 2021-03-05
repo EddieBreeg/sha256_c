@@ -172,6 +172,6 @@ void sha256_hash_file(FILE* file, byte output[32])
 {
     sha256_context ctx;
     init(&ctx, 0);
-    hash_file(&ctx, data);
+    hash_file(&ctx, file);
     finish(&ctx, output);
 }
