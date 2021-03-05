@@ -19,6 +19,11 @@ void sha256_hash(const void* data, size_t len, byte output[32])
 ```
 Hashes the data buffer and copies the result into the output buffer.
 
+```C
+void sha256_hash_file(FILE* data, byte output[32])
+```
+Computes the hash of the data contained in the file, and copies the result into the output buffer.
+
 ## Examples and tests
 
 There are a few programs you can use in the [tests](tests) folder in order to ensure the implementation

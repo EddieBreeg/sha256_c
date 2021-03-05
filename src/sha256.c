@@ -124,7 +124,27 @@ void hash(sha256_context* ctx, byte* data)
     }
     byte buffer[128] = {0};
     memcpy(buffer, data + ctx->dataLength - n, n);
-    for (int i = 0; i < pad(buffer, ctx->dataLength); i+=64)
+    uint32 N = pad(buffer, ctx->dataLength);
+    for (int i = 0; i < N; i+=64)
+    {
+        parse(ctx, buffer+i);
+        update(ctx);
+    }
+}
+void hash_file(sha256_context* ctx, FILE* file)
+{
+    byte buffer[128] = {0};
+    uint32 n = fread(buffer, 1, 64, file);
+    while(n == 64)
+    {
+        parse(ctx, buffer);
+        update(ctx);
+        ctx->dataLength += n;
+        n = fread(buffer, 1, 64, file);
+    }
+    ctx->dataLength += n;
+    uint32 N = pad(buffer, ctx->dataLength);
+    for (int i = 0; i < N; i+=64)
     {
         parse(ctx, buffer+i);
         update(ctx);
@@ -146,5 +166,12 @@ void sha256_hash(const void* data, size_t len, byte output[32])
     sha256_context ctx;
     init(&ctx, len);
     hash(&ctx, (byte*)data);
+    finish(&ctx, output);
+}
+void sha256_hash_file(FILE* file, byte output[32])
+{
+    sha256_context ctx;
+    init(&ctx, 0);
+    hash_file(&ctx, data);
     finish(&ctx, output);
 }
