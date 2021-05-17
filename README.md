@@ -24,6 +24,17 @@ void sha256_hash_file(FILE* data, byte output[32])
 ```
 Computes the hash of the data contained in the file, and copies the result into the output buffer.
 
+## main.c
+
+[main.c](src/main.c) is a simple utility that allows you to either encrypt a text string (passed as an argument) or the content of a file.\
+__Usage__:\
+`sha256 sha256 [options] <input>`
+
+__Options__:\
+-h: help module\
+-f: input is a file to read from\
+-U: Use UPPERCASE format
+
 ## Examples and tests
 
 There are a few programs you can use in the [tests](tests) folder in order to ensure the implementation

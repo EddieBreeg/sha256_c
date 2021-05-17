@@ -1,11 +1,15 @@
 SDIR = src
-CFLAGS = -I $(SDIR) -Wall -g
+CFLAGS = -I $(SDIR) -Wall
 BIN = bin
 
 all: $(BIN)
+	make main
 	make test1
 	make test2
 	make test3
+
+main: $(SDIR)/sha256.c $(SDIR)/main.c
+	gcc $(SDIR)/sha256.c $(SDIR)/main.c $(CFLAGS) -o $(BIN)/sha256
 
 test1: $(SDIR)/sha256.c tests/test.c
 	gcc $(SDIR)/sha256.c tests/test.c $(CFLAGS) -o $(BIN)/test
