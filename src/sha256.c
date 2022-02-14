@@ -19,6 +19,7 @@
 #include "sha256.h"
 #include <stdio.h>
 
+
 #define Ch(x, y, z) ((x & y) ^ (~x & z))
 #define Maj(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
 
@@ -26,6 +27,13 @@
 #define SIGMA_1(x) (ROTR(x,  6) ^ ROTR(x, 11) ^ ROTR(x, 25))
 #define sigma_0(x) (ROTR(x,  7) ^ ROTR(x, 18) ^ (x >> 3))
 #define sigma_1(x) ((ROTR(x, 17) ^ ROTR(x, 19)) ^ (x >> 10))
+
+typedef struct sha256_context
+{
+    uint32 block[16];
+    uint32 hash[8];
+    size_t dataLength;
+} sha256_context;
 
 uint32 K[] = {
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
